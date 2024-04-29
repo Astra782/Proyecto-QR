@@ -1,11 +1,10 @@
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/rendering.dart';
 import 'package:qr_proyect/pages/qr_screen.dart';
 //import 'package:qr_proyect/firebase_options.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import 'package:geolocator/geolocator.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,8 +54,8 @@ class _HomePageState extends State<HomePage>{
 
   void _handleGoogleSignIn(){
     try{
-      GoogleAuthProvider _GoogleAuthProvider = GoogleAuthProvider();
-      _auth.signInWithProvider(_GoogleAuthProvider);
+      GoogleAuthProvider GoogleAuthProvider = GoogleAuthProvider();
+      _auth.signInWithProvider(GoogleAuthProvider);
       //Navigator.push(context, MaterialPageRoute(builder: (context) => const QrScreen()));
     }catch(error){
       print(error);
@@ -65,57 +64,9 @@ class _HomePageState extends State<HomePage>{
   void _autostart(){
     FirebaseAuth.instance.authStateChanges().listen((User? user){
       if(user != null){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QrScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const QrScreen()));
       }
     });
   }
 }
 
-class LocationPage extends StatefulWidget {
-  @override
-  _LocationPageState createState() => _LocationPageState();
-}
-
-class _LocationPageState extends State<LocationPage> {
-  late Position _currentPosition;
-  
-  @override 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar (
-        title: Text('Ubicacion actual'),
-      ), 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "LAT: ${_currentPosition.latitude}, LNG:${_currentPosition.longitude}"),
-              FlatButton(
-                child: Text("Obtener ubicacion"),
-                onPressed: () {
-                  _getCurrentLocation();
-                },
-               ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _getCurrentLocation() {
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    }).catchError((e) {
-      print(e);
-    });
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<Position>('_currentPosition', _currentPosition));
-  }
-}
